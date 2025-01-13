@@ -1,11 +1,11 @@
 import torch
 import torch.nn as nn
-from torchvision import transforms, datasets
+from torchvision import datasets
 from torch.utils.data import DataLoader
 import pandas as pd
 import os
-from PIL import Image
 import numpy as np
+from util import get_image_transform, save_results_to_csv
 
 # 定义与训练时相同的VAE模型结构
 class ConvVAE(nn.Module):
@@ -51,10 +51,7 @@ class ConvVAE(nn.Module):
         return self.fc_mu(h)
 
 # 图片预处理
-transform = transforms.Compose([
-    transforms.Resize((512, 512)),
-    transforms.ToTensor(),
-])
+transform = get_image_transform()
 
 # 加载模型
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -87,4 +84,4 @@ with torch.no_grad():
 
 # 保存为CSV
 df = pd.DataFrame(results)
-df.to_csv('latent_features.csv', index=False)
+save_results_to_csv(df, 'latent_features.csv')

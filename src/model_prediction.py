@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.svm import SVR
@@ -10,6 +9,7 @@ from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C
 from sklearn.linear_model import Ridge
 import xgboost as xgb
 import umap.umap_ as umap
+from util import get_standard_scaler, save_results_to_csv
 
 # 读取数据
 df_original = pd.read_csv('20240826_ZHmag to TMEC_data-base-5.csv')
@@ -49,8 +49,8 @@ X = np.hstack([X_elements, X_latent])
 y = df_original_filtered[targets].values
 
 # 数据标准化
-scaler_X = StandardScaler()
-scaler_y = StandardScaler()
+scaler_X = get_standard_scaler()
+scaler_y = get_standard_scaler()
 X_scaled = scaler_X.fit_transform(X)
 y_scaled = scaler_y.fit_transform(y)
 
@@ -122,4 +122,4 @@ results_df = pd.DataFrame.from_dict({(i,j): results[i][j]
                                    for i in results.keys() 
                                    for j in results[i].keys()}, 
                                    orient='index')
-results_df.to_csv('prediction_results.csv') 
+save_results_to_csv(results_df, 'prediction_results.csv')

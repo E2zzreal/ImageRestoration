@@ -1,9 +1,9 @@
 import pandas as pd
 from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import silhouette_score
 import umap.umap_ as umap
 import numpy as np
+from util import get_standard_scaler, save_results_to_csv
 
 # 读取latent features
 df = pd.read_csv('latent_features.csv')
@@ -13,7 +13,7 @@ X = df.iloc[:, 2:].values  # latent features
 samples = df['sample'].values
 
 # 标准化数据
-scaler = StandardScaler()
+scaler = get_standard_scaler()
 X_scaled = scaler.fit_transform(X)
 
 # PCA降维
@@ -60,8 +60,8 @@ for sample in np.unique(samples):
 df_pca = pd.DataFrame(X_pca, columns=['pca_1', 'pca_2'])
 df_umap = pd.DataFrame(X_umap, columns=['umap_1', 'umap_2'])
 df_results = pd.concat([df[['sample', 'image']], df_pca, df_umap], axis=1)
-df_results.to_csv('latent_2d_projections.csv', index=False)
+save_results_to_csv(df_results, 'latent_2d_projections.csv')
 
 # 保存聚类指标
 df_metrics = pd.DataFrame(results)
-df_metrics.to_csv('clustering_metrics.csv', index=False)
+save_results_to_csv(df_metrics, 'clustering_metrics.csv')
